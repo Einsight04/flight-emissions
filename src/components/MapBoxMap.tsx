@@ -134,7 +134,7 @@ const Map: React.FC<MapProps> = ({locations}) => {
         };
     }, [locations]);
 
-    return <div className="overflow-hidden" ref={mapContainerRef} style={{height: '100vh', width: '100vw'}}/>;
+    return <div className="overflow-hidden" ref={mapContainerRef} style={{height: '100vh', width: '80vw'}}/>;
 };
 
 export default Map;

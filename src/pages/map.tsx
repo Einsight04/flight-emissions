@@ -2,6 +2,7 @@ import MapBoxMap from '../components/MapBoxMap';
 import {useState} from "react";
 import {useEffect} from "react";
 import {api} from "../utils/api";
+import Sidebar from "../components/Sidebar";
 
 
 interface Location {
@@ -29,22 +30,11 @@ const geoLocation = async (location: string) => {
 }
 
 
-// const locationsTest = [
-//     {
-//         from: {name: 'Location 1', location: "Dallas/Fort Worth International"},
-//         to: {name: 'Location 2', location: "San Francisco International"}
-//     },
-//     {
-//         from: {name: 'Location 3', location: "Toronto Airport"},
-//         to: {name: 'Location 4', location: "Los Angeles International"}
-//     }
-// ]
-
 const MapWrapper = () => {
     const [locations, setLocations] = useState<Location[]>([]);
     const {data: flightsData} = api.flights.getLocations.useQuery();
 
-        console.log(flightsData)
+    console.log(flightsData)
     useEffect(() => {
 
         if (!flightsData) return;
@@ -63,27 +53,15 @@ const MapWrapper = () => {
     }, [flightsData]);
 
     return (
-        locations
-            ? <MapBoxMap locations={locations}/>
-            : <div>Loading...</div>
-        // <div>
-        //     {locations.map(location => {
-        //         return (
-        //             <div>
-        //                 <p>{location.from.name}</p>
-        //                 <p>{location.from.latitude}</p>
-        //                 <p>{location.from.longitude}</p>
-        //
-        //                 <p>{location.to.name}</p>
-        //                 <p>{location.to.latitude}</p>
-        //                 <p>{location.to.longitude}</p>
-        //             </div>
-        //         )
-        //     })}
-        // </div>
-    )
-
-    // return <MapBoxMap locations={locations}/>;
+        <div>
+            <Sidebar>
+                {locations
+                    ? <MapBoxMap locations={locations}/>
+                    : <div>Loading...</div>
+                }
+            </Sidebar>
+        </div>
+    );
 };
 
 export default MapWrapper;
