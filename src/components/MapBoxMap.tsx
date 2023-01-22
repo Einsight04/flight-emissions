@@ -140,7 +140,7 @@ const Map: React.FC<MapProps> = ({locations, emissions}) => {
     return (
         <div className="overflow-hidden" ref={mapContainerRef} style={{height: '100vh', width: '100vw'}}>
             <div className="absolute top-8 left-0 right-0 mx-auto w-1/2 text-center text-white">
-                <h1 className="text-4xl font-thin">Today&apos;s Flight Emissions: {emissions} kg</h1>
+                <h1 className="text-4xl font-thin">{Math.round(emissions * 100) / 100} kg of CO2 emissions</h1>
             </div>
         </div>
     );

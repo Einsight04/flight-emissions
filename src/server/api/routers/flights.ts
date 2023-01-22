@@ -19,7 +19,7 @@ const extractLocation = (flightData: FlightSigData[]): LocationData[] => {
 
 const getFlights = async (): Promise<FlightSigData[]> => {
     const response = await fetch(
-        "http://api.aviationstack.com/v1/flights?access_key=8ab37e59883a5d298090e42fa6a64186"
+        "http://api.aviationstack.com/v1/flights?access_key=e4dc42947b4741daaeedd1d6ed85bd4d"
     );
 
     const allFlights = await response.json() as AllFlights;
