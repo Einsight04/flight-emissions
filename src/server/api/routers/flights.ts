@@ -6,69 +6,73 @@ export const flightsRouter = createTRPCRouter({
     return await getFlights();
   }),
   getLocations: publicProcedure.query(async () => {
-   const allFlights: FlightSigData[] | undefined= await getFlights();
+    const allFlights: FlightSigData[] | undefined = await getFlights();
     if (allFlights === undefined) {
       return undefined;
     }
-   return extractLocation(allFlights);
-  })
+    return extractLocation(allFlights);
+  }),
 });
 
-
-function extractLocation (flightData: FlightSigData[]): LocationData[] {
-  return flightData.map(flight => ({
-    from: { flight_number: flight.flight_number, location: flight.departure },
-    to: { flight_number: flight.flight_number, location: flight.arrival }
+function extractLocation(flightData: FlightSigData[]): LocationData[] {
+  return flightData.map((flight) => ({
+    from: {
+      flight_number: flight.flight_number,
+      location: `${flight.departure} Airport`,
+    },
+    to: {
+      flight_number: flight.flight_number,
+      location: `${flight.arrival} Airport`,
+    },
   }));
 }
 
 async function getFlights(): Promise<FlightSigData[] | undefined> {
-
   try {
-    const response = await fetch("http://api.aviationstack.com/v1/flights?access_key=f3ec6adc0f95e9606cba4a34043eeeab");
-    const allFlights :AllFlights | undefined =  await response.json() as AllFlights;
+    const response = await fetch(
+      "http://api.aviationstack.com/v1/flights?access_key=f3ec6adc0f95e9606cba4a34043eeeab"
+    );
+    const allFlights: AllFlights | undefined =
+      (await response.json()) as AllFlights;
 
     if (allFlights === undefined) {
       console.log("data is undefined");
       return undefined;
     }
 
-    console.log(allFlights)
+    console.log(allFlights);
 
-    return allFlights.data.map(flight => ({
+    return allFlights.data.map((flight) => ({
       departure: flight.departure.airport,
       arrival: flight.arrival.airport,
       flight_number: flight.flight.number,
       airline_name: flight.airline.name,
-      icao: flight.airline.icao
+      icao: flight.airline.icao,
     }));
-
   } catch (error) {
     console.log(error);
   }
-
 }
 
 interface LocationData {
-  from: { flight_number: string, location: string },
-  to: { flight_number: string, location: string }
+  from: { flight_number: string; location: string };
+  to: { flight_number: string; location: string };
 }
 
 interface FlightsData {
-  departure: string,
-  arrival: string,
-  flight_number: string,
-  airline_name: string,
-  icao: string
+  departure: string;
+  arrival: string;
+  flight_number: string;
+  airline_name: string;
+  icao: string;
 }
 
-
 interface FlightSigData {
-  departure: string,
-  arrival: string,
-  flight_number: string,
-  airline_name: string,
-  icao: string
+  departure: string;
+  arrival: string;
+  flight_number: string;
+  airline_name: string;
+  icao: string;
 }
 
 interface Flight {
