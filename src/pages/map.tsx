@@ -58,6 +58,8 @@ const MapWrapper = () => {
     }, []);
 
 
+
+
     try {
         const {data: flightData} = api.flights.getLocations.useQuery();
         console.log(flightData)
