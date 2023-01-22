@@ -49,13 +49,10 @@ const MapWrapper = () => {
     }, [flightsData]);
 
     return (
-        <Sidebar>
-            {locations
-                ? <MapBoxMap locations={locations}/>
-                : <div>Loading...</div>
-            }
-        </Sidebar>
-    );
+        locations
+            ? <MapBoxMap locations={locations}/>
+            : <div>Loading...</div>
+    )
 };
 
 export default MapWrapper;
