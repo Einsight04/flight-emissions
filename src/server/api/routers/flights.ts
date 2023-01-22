@@ -2,43 +2,47 @@ import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const flightsRouter = createTRPCRouter({
   getFlights: publicProcedure.query(async () => {
+    console.log("getFlights called");
     return await getFlights();
   })
 });
 
-async function getData() {
+
+function extractLocation (flightData: FlightSigData[]): LocationData[] {
+  return flightData.map(flight => ({
+    from: { flight_number: flight.flight_number, location: flight.departure },
+    to: { flight_number: flight.flight_number, location: flight.arrival }
+  }));
+}
+
+async function getFlights(): Promise<FlightSigData[] | undefined> {
+
   try {
     const response = await fetch("http://api.aviationstack.com/v1/flights?access_key=f3ec6adc0f95e9606cba4a34043eeeab");
-    return await response.json() as AllFlights;
+    const allFlights :AllFlights | undefined =  await response.json() as AllFlights;
+
+    if (allFlights === undefined) {
+      console.log("data is undefined");
+      return undefined;
+    }
+
+    return allFlights.data.map(flight => ({
+      departure: flight.departure.airport,
+      arrival: flight.arrival.airport,
+      flight_number: flight.flight.number,
+      airline_name: flight.airline.name,
+      icao: flight.airline.icao
+    }));
+
   } catch (error) {
     console.log(error);
   }
+
 }
 
-async function getFlights() : Promise<FlightSigData[] | undefined> {
-  const data: AllFlights | undefined = await getData();
-  if (data === undefined) {
-    console.log("data is undefined");
-    return undefined
-  }
-
-  const flightData: FlightSigData[] = [];
-
-  for (let i = 0; i < data.data.length; i++) {
-    const flight: Flight | undefined = data.data[i];
-
-    if (flight !== undefined) {
-      const temp: FlightsData = {
-        departure: flight.departure.airport,
-        arrival: flight.arrival.airport,
-        flight_number: flight.flight.number,
-        airline_name: flight.airline.name,
-        icao: flight.airline.icao
-      };
-      flightData.push(temp);
-    }
-  }
-  return flightData;
+interface LocationData {
+  from: { flight_number: string, location: string },
+  to: { flight_number: string, location: string }
 }
 
 interface FlightsData {
