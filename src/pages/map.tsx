@@ -29,44 +29,38 @@ const geoLocation = async (location: string) => {
 }
 
 
-const locationsTest = [
-    {
-        from: {name: 'Location 1', location: "Dallas/Fort Worth International"},
-        to: {name: 'Location 2', location: "San Francisco International"}
-    },
-    {
-        from: {name: 'Location 3', location: "Toronto Airport"},
-        to: {name: 'Location 4', location: "Los Angeles International"}
-    }
-]
+// const locationsTest = [
+//     {
+//         from: {name: 'Location 1', location: "Dallas/Fort Worth International"},
+//         to: {name: 'Location 2', location: "San Francisco International"}
+//     },
+//     {
+//         from: {name: 'Location 3', location: "Toronto Airport"},
+//         to: {name: 'Location 4', location: "Los Angeles International"}
+//     }
+// ]
 
 const MapWrapper = () => {
     const [locations, setLocations] = useState<Location[]>([]);
+    const {data: flightsData} = api.flights.getLocations.useQuery();
 
+        console.log(flightsData)
     useEffect(() => {
-        // void Promise.all(locationsTest.map(async location => {
-        //     const from = await geoLocation(location.from.location);
-        //     const to = await geoLocation(location.to.location);
-        //
-        //     return {
-        //         from: {name: location.from.name, ...from},
-        //         to: {name: location.to.name, ...to}
-        //     }
-        // })).then(locations => {
-        //     setLocations(locations);
-        // });
-    }, []);
 
+        if (!flightsData) return;
 
+        void Promise.all(flightsData.map(async flightData => {
+            const from = await geoLocation(flightData.from.location);
+            const to = await geoLocation(flightData.to.location);
 
-
-    try {
-        const {data: flightData} = api.flights.getLocations.useQuery();
-        console.log(flightData)
-    } catch (e) {
-        console.log(e)
-    }
-
+            return {
+                from: {name: flightData.from.location, ...from},
+                to: {name: flightData.to.location, ...to}
+            }
+        })).then(locations => {
+            setLocations(locations);
+        });
+    }, [flightsData]);
 
     return (
         locations
