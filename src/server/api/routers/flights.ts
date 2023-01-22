@@ -33,6 +33,8 @@ async function getFlights(): Promise<FlightSigData[] | undefined> {
       return undefined;
     }
 
+    console.log(allFlights)
+
     return allFlights.data.map(flight => ({
       departure: flight.departure.airport,
       arrival: flight.arrival.airport,

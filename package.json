@@ -17,13 +17,16 @@
     "@trpc/react-query": "^10.8.1",
     "@trpc/server": "^10.8.1",
     "google-map-react": "^2.2.0",
+    "mapbox-gl": "^2.12.0",
     "next": "13.1.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-map-gl": "^7.0.21",
     "superjson": "1.9.1",
     "zod": "^3.20.2"
   },
   "devDependencies": {
+    "@types/google-map-react": "^2.1.7",
     "@types/node": "^18.11.18",
     "@types/prettier": "^2.7.2",
     "@types/react": "^18.0.26",
