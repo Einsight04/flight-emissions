@@ -5,7 +5,8 @@ import Link from "next/link";
 import { api } from "../utils/api";
 
 const Home: NextPage = () => {
-  const {data: flights} = api.flights.getFlights.useQuery();
+  // const {data: flights} = api.flights.getFlights.useQuery();
+  const {data: locations} = api.flights.getLocations.useQuery()
 
   return (
     <>
@@ -44,7 +45,7 @@ const Home: NextPage = () => {
             </Link>
           </div>
           <p className="text-2xl text-white">
-            {flights ? "success" : "Loading"}
+            {locations ? "success" : "Loading"}
           </p>
         </div>
       </main>

@@ -4,6 +4,13 @@ export const flightsRouter = createTRPCRouter({
   getFlights: publicProcedure.query(async () => {
     console.log("getFlights called");
     return await getFlights();
+  }),
+  getLocations: publicProcedure.query(async () => {
+   const allFlights: FlightSigData[] | undefined= await getFlights();
+    if (allFlights === undefined) {
+      return undefined;
+    }
+   return extractLocation(allFlights);
   })
 });
 
