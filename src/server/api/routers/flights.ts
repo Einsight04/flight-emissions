@@ -1,11 +1,9 @@
 import {createTRPCRouter, publicProcedure} from "../trpc";
+import type {FlightSigData, LocationData, AllFlights} from "../../types/flights";
+import {FlightsData, Flight} from "../../types/flights";
 
-export const flightsRouter = createTRPCRouter({
-    getFlights: publicProcedure.query(async () => await getFlights()),
-    getLocations: publicProcedure.query(async () => extractLocation(await getFlights())),
-});
 
-function extractLocation(flightData: FlightSigData[]): LocationData[] {
+const extractLocation = (flightData: FlightSigData[]): LocationData[] => {
     return flightData.map((flight) => ({
         from: {
             flight_number: flight.flight_number,
@@ -18,7 +16,8 @@ function extractLocation(flightData: FlightSigData[]): LocationData[] {
     }));
 }
 
-async function getFlights(): Promise<FlightSigData[]> {
+
+const getFlights = async (): Promise<FlightSigData[]> => {
     const response = await fetch(
         "http://api.aviationstack.com/v1/flights?access_key=f3ec6adc0f95e9606cba4a34043eeeab"
     );
@@ -34,94 +33,7 @@ async function getFlights(): Promise<FlightSigData[]> {
     }));
 }
 
-interface LocationData {
-    from: { flight_number: string; location: string };
-    to: { flight_number: string; location: string };
-}
-
-interface FlightsData {
-    departure: string;
-    arrival: string;
-    flight_number: string;
-    airline_name: string;
-    icao: string;
-}
-
-interface FlightSigData {
-    departure: string;
-    arrival: string;
-    flight_number: string;
-    airline_name: string;
-    icao: string;
-}
-
-interface Flight {
-    flight_date: string;
-    flight_status: string;
-    departure: {
-        airport: string;
-        timezone: string;
-        iata: string;
-        icao: string;
-        terminal: string;
-        gate: string;
-        delay: number;
-        scheduled: string;
-        estimated: string;
-        actual: string;
-        estimated_runway: string;
-        actual_runway: string;
-    };
-    arrival: {
-        airport: string;
-        timezone: string;
-        iata: string;
-        icao: string;
-        terminal: string;
-        gate: string;
-        baggage: string;
-        delay: number;
-        scheduled: string;
-        estimated: string;
-        actual: string | null;
-        estimated_runway: string | null;
-        actual_runway: string | null;
-    };
-    airline: {
-        name: string;
-        iata: string;
-        icao: string;
-    };
-    flight: {
-        number: string;
-        iata: string;
-        icao: string;
-        codeshared: string | null;
-    };
-    aircraft: {
-        registration: string;
-        iata: string;
-        icao: string;
-        icao24: string;
-    };
-    live: {
-        updated: string;
-        latitude: number;
-        longitude: number;
-        altitude: number;
-        direction: number;
-        speed_horizontal: number;
-        speed_vertical: number;
-        is_ground: boolean;
-    };
-}
-
-interface AllFlights {
-    pagination: {
-        limit: number;
-        offset: number;
-        count: number;
-        total: number;
-    };
-    data: Flight[];
-}
+export const flightsRouter = createTRPCRouter({
+    getFlights: publicProcedure.query(async () => await getFlights()),
+    getLocations: publicProcedure.query(async () => extractLocation(await getFlights())),
+});
