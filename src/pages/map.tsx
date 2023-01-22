@@ -4,27 +4,24 @@ import {useEffect} from "react";
 import {api} from "../utils/api";
 import Sidebar from "../components/Sidebar";
 
+interface GeoCodeResponse {
+    features: [{ center: [number, number] }]
+}
 
 interface Location {
     from: { name: string, latitude: number, longitude: number },
     to: { name: string, latitude: number, longitude: number }
 }
 
-interface GeoCodeResponse {
-    features: [{ center: [number, number] }]
-}
-
 const geoLocation = async (location: string) => {
     const mapboxAccessToken = 'pk.eyJ1IjoiZWluc2lnaHQiLCJhIjoiY2xkNmhzOXB0MGdmMzNucGRndnAxbWhoNSJ9.bcxIvSWS39DAGWGs87vJdQ';
     const geocodeURL = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(location)}.json?access_token=${mapboxAccessToken}`;
-
 
     const response = await fetch(geocodeURL);
 
     const data = await response.json() as GeoCodeResponse;
 
-    const longitude = data.features[0].center[0];
-    const latitude = data.features[0].center[1];
+    const [longitude, latitude] = data.features[0].center;
 
     return {longitude, latitude};
 }
@@ -36,7 +33,6 @@ const MapWrapper = () => {
 
     console.log(flightsData)
     useEffect(() => {
-
         if (!flightsData) return;
 
         void Promise.all(flightsData.map(async flightData => {
@@ -53,14 +49,12 @@ const MapWrapper = () => {
     }, [flightsData]);
 
     return (
-        <div>
-            <Sidebar>
-                {locations
-                    ? <MapBoxMap locations={locations}/>
-                    : <div>Loading...</div>
-                }
-            </Sidebar>
-        </div>
+        <Sidebar>
+            {locations
+                ? <MapBoxMap locations={locations}/>
+                : <div>Loading...</div>
+            }
+        </Sidebar>
     );
 };
 
