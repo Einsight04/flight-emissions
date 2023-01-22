@@ -5,7 +5,7 @@ import Link from "next/link";
 import { api } from "../utils/api";
 
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
+  const {data: flights} = api.flights.getFlights.useQuery();
 
   return (
     <>
@@ -44,7 +44,7 @@ const Home: NextPage = () => {
             </Link>
           </div>
           <p className="text-2xl text-white">
-            {hello.data ? hello.data.greeting : "Loading tRPC query..."}
+            {flights ? "success" : "Loading"}
           </p>
         </div>
       </main>

@@ -1,17 +1,62 @@
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
-
 export const flightsRouter = createTRPCRouter({
   getFlights: publicProcedure.query(async () => {
-    try {
-
-      const response = await fetch("http://api.aviationstack.com/v1/flights?access_key=f3ec6adc0f95e9606cba4a34043eeeab");
-        return await response.json() as AllFlights
-    } catch (error) {
-      console.log(error);
-    }
+    return await getFlights();
   })
 });
+
+async function getData() {
+  try {
+    const response = await fetch("http://api.aviationstack.com/v1/flights?access_key=f3ec6adc0f95e9606cba4a34043eeeab");
+    return await response.json() as AllFlights;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function getFlights() : Promise<FlightSigData[] | undefined> {
+  const data: AllFlights | undefined = await getData();
+  if (data === undefined) {
+    console.log("data is undefined");
+    return undefined
+  }
+
+  const flightData: FlightSigData[] = [];
+
+  for (let i = 0; i < data.data.length; i++) {
+    const flight: Flight | undefined = data.data[i];
+
+    if (flight !== undefined) {
+      const temp: FlightsData = {
+        departure: flight.departure.airport,
+        arrival: flight.arrival.airport,
+        flight_number: flight.flight.number,
+        airline_name: flight.airline.name,
+        icao: flight.airline.icao
+      };
+      flightData.push(temp);
+    }
+  }
+  return flightData;
+}
+
+interface FlightsData {
+  departure: string,
+  arrival: string,
+  flight_number: string,
+  airline_name: string,
+  icao: string
+}
+
+
+interface FlightSigData {
+  departure: string,
+  arrival: string,
+  flight_number: string,
+  airline_name: string,
+  icao: string
+}
 
 interface Flight {
   flight_date: string;
