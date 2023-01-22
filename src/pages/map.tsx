@@ -2,7 +2,7 @@ import MapBoxMap from '../components/MapBoxMap';
 import {useState} from "react";
 import {useEffect} from "react";
 import {api} from "../utils/api";
-import Sidebar from "../components/Sidebar";
+
 
 interface GeoCodeResponse {
     features: [{ center: [number, number] }]
@@ -26,12 +26,24 @@ const geoLocation = async (location: string) => {
     return {longitude, latitude};
 }
 
+const totalEmissions = (locations: Location[]) => {
+    // take distance between locations and multiply by emissions per km
+    return locations.reduce((total, location) => {
+        const from = location.from
+        const to = location.to
+
+        const distance = Math.sqrt(Math.pow(from.latitude - to.latitude, 2) + Math.pow(from.longitude - to.longitude, 2))
+        const emissions = distance * 0.1
+
+        return total + emissions
+    }, 0)
+}
+
 
 const MapWrapper = () => {
     const [locations, setLocations] = useState<Location[]>([]);
     const {data: flightsData} = api.flights.getLocations.useQuery();
 
-    console.log(flightsData)
     useEffect(() => {
         if (!flightsData) return;
 
@@ -50,7 +62,9 @@ const MapWrapper = () => {
 
     return (
         locations
-            ? <MapBoxMap locations={locations}/>
+            ? <div>
+                <MapBoxMap locations={locations} emissions={totalEmissions(locations)}/>
+            </div>
             : <div>Loading...</div>
     )
 };

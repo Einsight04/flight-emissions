@@ -9,9 +9,10 @@ interface Location {
 
 interface MapProps {
     locations: Location[]
+    emissions: number
 }
 
-const Map: React.FC<MapProps> = ({locations}) => {
+const Map: React.FC<MapProps> = ({locations, emissions}) => {
     const mapContainerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -19,14 +20,16 @@ const Map: React.FC<MapProps> = ({locations}) => {
 
         MapboxGL.accessToken = 'pk.eyJ1IjoiZWluc2lnaHQiLCJhIjoiY2xkNmhzOXB0MGdmMzNucGRndnAxbWhoNSJ9.bcxIvSWS39DAGWGs87vJdQ';
 
-        const newMap = new MapboxGL.Map({
+        const map = new MapboxGL.Map({
             container: mapContainerRef.current,
             style: 'mapbox://styles/mapbox/dark-v10',
             center: [-74.5, 40],
-            zoom: 12
+            zoom: 12,
         });
 
-        newMap.on('load', () => {
+        map.dragRotate.disable();
+
+        map.on('load', () => {
             // Convert the "from" and "to" locations into a single GeoJSON feature collection
             const lineData = {
                 type: 'FeatureCollection',
@@ -42,13 +45,13 @@ const Map: React.FC<MapProps> = ({locations}) => {
             };
 
             // Add the line data as a new source for the map
-            newMap.addSource('lines', {
+            map.addSource('lines', {
                 type: 'geojson',
                 data: lineData as GeoJSON
             });
 
             // Add a new layer to the map to display the lines
-            newMap.addLayer({
+            map.addLayer({
                 id: 'lines',
                 type: 'line',
                 source: 'lines',
@@ -77,13 +80,13 @@ const Map: React.FC<MapProps> = ({locations}) => {
             };
 
             // Add the "from" data as a new source for the map
-            newMap.addSource('from', {
+            map.addSource('from', {
                 type: 'geojson',
                 data: fromData as GeoJSON
             });
 
             // Add a new layer to the map to display the "from" points
-            newMap.addLayer({
+            map.addLayer({
                 id: 'from',
                 type: 'circle',
                 source: 'from',
@@ -111,13 +114,13 @@ const Map: React.FC<MapProps> = ({locations}) => {
             };
 
             // Add the "to" data as a new source for the map
-            newMap.addSource('to', {
+            map.addSource('to', {
                 type: 'geojson',
                 data: toData as GeoJSON
             });
 
             // Add a new layer to the map to display the "to" points
-            newMap.addLayer({
+            map.addLayer({
                 id: 'to',
                 type: 'circle',
                 source: 'to',
@@ -130,11 +133,17 @@ const Map: React.FC<MapProps> = ({locations}) => {
 
 
         return () => {
-            newMap.remove();
+            map.remove();
         };
     }, [locations]);
 
-    return <div className="overflow-hidden" ref={mapContainerRef} style={{height: '100vh', width: '100vw'}}/>;
+    return (
+        <div className="overflow-hidden" ref={mapContainerRef} style={{height: '100vh', width: '100vw'}}>
+            <div className="absolute top-8 left-0 right-0 mx-auto w-1/2 text-center text-white">
+                <h1 className="text-4xl font-thin">Today&apos;s Flight Emissions: {emissions} kg</h1>
+            </div>
+        </div>
+    );
 };
 
 export default Map;
