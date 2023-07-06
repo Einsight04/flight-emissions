@@ -1,6 +1,6 @@
-# Global Flight Emissions - Built for a hackathon where we won 1st place as a team of two
+# Global Flight Emissions
 
-This webapp tracks global flights through an API, and plots location data using MapBox-GL. Using this data, we calculate the total CO2 emissions of all flights for the day.
+Built for a hackathon where we won 1st place as a team of two, this webapp tracks global flights through an API, and plots location data using MapBox-GL. Using this data, we calculate the total CO2 emissions of all flights for the day.
 
 **NOTE:** Only 100 concurrent flights are shown under the free plan of the flights api.
 
